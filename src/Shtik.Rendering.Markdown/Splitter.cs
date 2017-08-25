@@ -9,6 +9,7 @@ namespace Shtik.Rendering.Markdown
     {
         private readonly StringReader _reader;
         private readonly StringBuilder _builder = new StringBuilder();
+        private bool _first = true;
 
         public Splitter(string markdown)
         {
@@ -19,22 +20,21 @@ namespace Shtik.Rendering.Markdown
         {
             CheckDisposed();
             if (_reader.Peek() == -1) return null;
-            bool first = true;
             _builder.Clear();
             while (_reader.Peek() >= 0)
             {
                 var line = _reader.ReadLine();
                 if (line.StartsWith("---"))
                 {
-                    if (first)
+                    if (_first)
                     {
-                        first = false;
+                        _first = false;
                         continue;
                     }
                     return _builder.ToString().Trim();
                 }
                 _builder.AppendLine(line);
-                first = false;
+                _first = false;
             }
             return _builder.ToString().Trim();
         }
